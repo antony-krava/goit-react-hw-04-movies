@@ -1,0 +1,14 @@
+.list {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+}
+
+.listItem {
+  margin: 10px;
+}
+
+.castName {
+  font-size: 10px;
+  text-align: center;
+}
