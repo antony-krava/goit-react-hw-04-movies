@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import SearchForm from '../../components/SearchForm';
 import MovieList from '../../components/MovieList';
 import styles from './MoviesPage.module.css';
 
@@ -9,40 +10,48 @@ class MoviesPage extends Component {
     movies: [],
   };
 
-  handleChange = e => {
-    this.setState({ query: e.currentTarget.value });
-  };
+  componentDidMount() {
+    const { search, pathname } = this.props.location;
+    if (pathname && search) {
+      this.setState({ query: search.slice(7) });
+    }
+  }
 
-  hendelSubmit = e => {
-    e.preventDefault();
+  async componentDidUpdate(_, prevState) {
+    const { query: currentQuery } = this.state;
+    const { query: prevQuery } = prevState;
 
-    axios
-      .get(
-        `https://api.themoviedb.org/3/search/movie?api_key=46ebbea232da466abf6f925c11796569&language=en-US&query=${this.state.query}&page=1&include_adult=false`,
-      )
-      .then(response => this.setState({ movies: response.data.results }))
-      .catch();
+    if (currentQuery.trim() === '') {
+      return;
+    }
 
-    this.setState({ query: '' });
+    if (currentQuery !== prevQuery) {
+      const response = await axios.get(
+        `https://api.themoviedb.org/3/search/movie?api_key=46ebbea232da466abf6f925c11796569&query=${currentQuery}`,
+      );
+
+      this.setState({ movies: [...response.data.results] });
+      return;
+    }
+  }
+  onChangeQuery = query => {
+    this.setState({
+      query: query,
+    });
+    this.props.history.push({
+      ...this.props.location,
+      search: `?query=${query}`,
+    });
   };
 
   render() {
     const { movies } = this.state;
+    const { location } = this.props;
 
     return (
       <div className={styles.container}>
-        <form onSubmit={this.hendelSubmit} className={styles.form}>
-          <input
-            type="text"
-            placeholder="Search film"
-            onChange={this.handleChange}
-            className={styles.input}
-          />
-          <button type="submit" className={styles.btn}>
-            <span className={styles.textBtn}>Search</span>
-          </button>
-        </form>
-        <MovieList movies={movies} />
+        <SearchForm onSubmit={this.onChangeQuery}/>
+        <MovieList location={location} movies={movies} />
       </div>
     );
   }

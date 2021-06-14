@@ -86,15 +86,15 @@ class MovieDetailsPage extends Component {
         </div>
 
         <div>
-          <h2>'Additional information'</h2>
+          <h2>Additional information</h2>
           <ul className={styles.list}>
             <li className={styles.item}>
-              <NavLink className={styles.link} activeClassName={styles.linkActive} exact to={`${url}/cast`}>
+              <NavLink className={styles.link} activeClassName={styles.linkActive} exact to={{ pathname: `${url}/cast`, state: { ...this.props.location.state } }}>
                 <span>Cast</span>
               </NavLink>
             </li>
             <li>
-              <NavLink className={styles.link} activeClassName={styles.linkActive} exact to={`${url}/reviews`}>
+              <NavLink className={styles.link} activeClassName={styles.linkActive} exact to={{ pathname: `${url}/reviews`, state: { ...this.props.location.state }}}>
                 <span>Reviews</span>
               </NavLink>
             </li>
